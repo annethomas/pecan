@@ -10,11 +10,11 @@
 pool_ic_list2netcdf <- function(input, outdir,siteid){
   ##define dimensions available for netcdf
   #assuming dynamic dim names aren't necessary
-  lon <- ncdf4::ncdim_def("lon", "degrees_east", vals = IClist$dims$lon, 
+  lon <- ncdf4::ncdim_def("lon", "degrees_east", vals = input$dims$lon, 
                           longname = "station_longitude")
-  lat <- ncdf4::ncdim_def("lat", "degrees_north", vals = IClist$dims$lat, 
+  lat <- ncdf4::ncdim_def("lat", "degrees_north", vals = input$dims$lat, 
                           longname = "station_latitude")
-  nsoil <- ncdf4::ncdim_def(name = "nsoil", units = "cm", vals = IClist$dims$nsoil, 
+  nsoil <- ncdf4::ncdim_def(name = "nsoil", units = "cm", vals = input$dims$nsoil, 
                             longname = "depth to bottom of layer")
   
   #sets of dims
@@ -42,15 +42,15 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
   #outdir <- "/fs/data3/aet4612/dbfiles"
   #note: test#
   str_ns <- paste0(siteid %/% 1e+09, "-", siteid %% 1e+09)
-  outfolder <- file.path(outdir, paste0("_site_", str_ns))
+  outfolder <- file.path(outdir, paste0("IC_site_", str_ns))
   nc  <- ncdf4::nc_create(outfolder, ncvars)
   
   #put variables in nc file
   for (i in seq(ncvars)) {
     #print(i)
     varname <- ncvars[[i]]$name
-    if (varname %in% names(IClist$vals)){
-      ncdf4::ncvar_put(nc, ncvars[[i]], IClist$vals[[varname]])
+    if (varname %in% names(input$vals)){
+      ncdf4::ncvar_put(nc, ncvars[[i]], input$vals[[varname]])
     }
     else{
       #don't load
