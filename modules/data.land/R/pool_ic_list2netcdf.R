@@ -24,18 +24,18 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
   #hardcoded vars (assumes these are the desirable variables)
   ic1 = ncvar_def(name = "AbvGrndWood", units = "kg C m-2", dim = dims1, -999)
   ic2 = ncvar_def(name = "TotSoilCarb", units = "kg C m-2", dim = dims2, -999)
-  ic3 = ncvar_def(name = "CoarseWoodyDebris", units = "kg C m-2", dim = dims1, -999)
+  ic3 = ncvar_def(name = "CoarseWoodyDebris", units = "kg C m-2", dim = dims1, -999) #made up
   ic4 = ncvar_def(name = "LAI", units = "m2 m-2", dim = dims1, -999)
   ic5 = ncvar_def(name = "SoilMoistFrac", units = "NA", dim = dims2, -999)
-  ic6 = ncvar_def(name = "LitterMoistFrac", units = "NA", dim = dims1, -999)
-  ic7 = ncvar_def(name = "Nitrogen", units = "kg m-2", dim = dims2, -999)
-  ic8 = ncvar_def(name = "Phosphorus", units = "kg m-2", dim = dims2, -999)
+  ic6 = ncvar_def(name = "LitterMoistFrac", units = "NA", dim = dims1, -999) #made up
+  ic7 = ncvar_def(name = "Nitrogen", units = "kg m-2", dim = dims2, -999) #made up
+  ic8 = ncvar_def(name = "Phosphorus", units = "kg m-2", dim = dims2, -999) #made up
   ic9 = ncvar_def(name = "SWE", units = "kg m-2", dim = dims1, -999)
-  ic10 = ncvar_def(name = "Microbe", units = "kg m-2", dim = dims1, -999)
+  ic10 = ncvar_def(name = "Microbe", units = "kg m-2", dim = dims1, -999) #made up
   
   ncvars = list(ic1,ic2,ic3,ic4,ic5,ic6,ic7,ic8,ic9,ic10)
   
-  #possibility: dynamic vars (would assume R list has standard names; need a lookup table for which variables need nsoil?)
+  #possibility: dynamic vars (would assume R list has standard names; need a lookup table for dims and units)
   
   
   #create nc file
@@ -53,11 +53,7 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
       ncdf4::ncvar_put(nc, ncvars[[i]], input$vals[[varname]])
     }
     else{
-      #don't load
-      #or
-      #find length of nsoil dim (check if dim 3 really is nsoil or locate by name?)
-      #numNA <- ncvars[[i]]$dim[[3]]$len 
-      #ncdf4::ncvar_put(nc, ncvars[[i]], rep(times = numNA,NA))
+      #will automatically add NA
     }
   }
   
