@@ -24,14 +24,15 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
   #hardcoded vars (assumes these are the desirable variables)
   ic1 = ncvar_def(name = "AbvGrndWood", units = "kg C m-2", dim = dims1, -999)
   ic2 = ncvar_def(name = "TotSoilCarb", units = "kg C m-2", dim = dims2, -999)
-  ic3 = ncvar_def(name = "CoarseWoodyDebris", units = "kg C m-2", dim = dims1, -999) #made up
+  ic3 = ncvar_def(name = "litter_carbon_content", units = "kg C m-2", dim = dims1, -999) #made up
   ic4 = ncvar_def(name = "LAI", units = "m2 m-2", dim = dims1, -999)
   ic5 = ncvar_def(name = "SoilMoistFrac", units = "NA", dim = dims2, -999)
-  ic6 = ncvar_def(name = "LitterMoistFrac", units = "NA", dim = dims1, -999) #made up
-  ic7 = ncvar_def(name = "Nitrogen", units = "kg m-2", dim = dims2, -999) #made up
-  ic8 = ncvar_def(name = "Phosphorus", units = "kg m-2", dim = dims2, -999) #made up
+  #took out LitterMoistFrac (made up name, specific to Sipnet)
+  ic6 = ncvar_def(name = "CoarseWoodyDebris", units = "NA", dim = dims1, -999) #made up
+  ic7 = ncvar_def(name = "soilN", units = "mg kg-1 soil", dim = dims2, -999) #made up
+  ic8 = ncvar_def(name = "soilP", units = "mg kg-1 soil", dim = dims2, -999) #made up
   ic9 = ncvar_def(name = "SWE", units = "kg m-2", dim = dims1, -999)
-  ic10 = ncvar_def(name = "Microbe", units = "kg m-2", dim = dims1, -999) #made up
+  ic10 = ncvar_def(name = "Microbial Biomass C", units = "mg C kg-1 soil", dim = dims1, -999) #made up
   
   ncvars = list(ic1,ic2,ic3,ic4,ic5,ic6,ic7,ic8,ic9,ic10)
   
@@ -39,8 +40,6 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
   
   
   #create nc file
-  #outdir <- "/fs/data3/aet4612/dbfiles"
-  #note: test#
   str_ns <- paste0(siteid %/% 1e+09, "-", siteid %% 1e+09)
   outfolder <- file.path(outdir, paste0("IC_site_", str_ns))
   nc  <- ncdf4::nc_create(outfolder, ncvars)
