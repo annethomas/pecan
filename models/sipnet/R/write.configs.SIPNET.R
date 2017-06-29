@@ -329,48 +329,51 @@ write.config.SIPNET <- function(defaults, trait.values, settings, run.id, inputs
     IC.nc = nc_open(IC.path) #check for successful open?
     
     ## plantWoodInit gC/m2
-    plantWood = try(ncvar_get(IC.nc,"AbvGrndWood"),silent = TRUE)
+    plantWood = try(ncdf4::ncvar_get(IC.nc,"AbvGrndWood"),silent = TRUE)
     if (!is.na(plantWood) && is.numeric(plantWood)) {
-      param[which(param[, 1] == "plantWoodInit"), 2] <- sum(plantWood) * 1000 #MsTMIP AbvGrndWood kgC/m2
+      param[which(param[, 1] == "plantWoodInit"), 2] <- plantWood * 1000 #MsTMIP AbvGrndWood kgC/m2
     }
     else{
       #try back-calculate from LAI,sla, and total biomass? where is total biomass?
     }
     ## laiInit m2/m2
-    lai = try(ncvar_get(IC.nc,"LAI"),silent = TRUE)
-    if (!is.na(LAI) && is.numeric(LAI)) {
+    lai = try(ncdf4::ncvar_get(IC.nc,"LAI"),silent = TRUE)
+    if (!is.na(lai) && is.numeric(lai)) {
       param[which(param[, 1] == "laiInit"), 2] <- lai
     }
     ## litterInit gC/m2
-    litter = try(ncvar_get(IC.nc,"litter_carbon_content"),silent = TRUE)
+    litter = try(ncdf4::ncvar_get(IC.nc,"litter_carbon_content"),silent = TRUE)
     if (!is.na(litter) && is.numeric(litter)) {
       param[which(param[, 1] == "litterInit"), 2] <- litter * 1000 #CF litter_carbon_content kg/m2
     }
     ## soilInit gC/m2
-    soil = try(ncvar_get(IC.nc,"TotSoilCarb"),silent = TRUE)
+    soil = try(ncdf4::ncvar_get(IC.nc,"TotSoilCarb"),silent = TRUE)
     if (!is.na(soil) && is.numeric(soil)) {
       param[which(param[, 1] == "soilInit"), 2] <- sum(soil) * 1000 #MsTMIP TotSoilCarb kg C/m2
     }
     ## litterWFracInit fraction
-    litterWFrac = try(ncvar_get(IC.nc,"LitterMoistFrac"),silent = TRUE) #may or may not actually include in standard ic file
+    litterWFrac = try(ncdf4::ncvar_get(IC.nc,"LitterMoistFrac"),silent = TRUE) #may or may not actually include in standard ic file
     if (!is.na(litterWFrac) && is.numeric(litterWFrac)) {
       param[which(param[, 1] == "litterWFracInit"), 2] <- litterWFrac
     }
     ## soilWFracInit fraction
-    soilWFrac = try(ncvar_get(IC.nc,"SoilMoistFrac"),silent = TRUE)
+    soilWFrac = try(ncdf4::ncvar_get(IC.nc,"SoilMoistFrac"),silent = TRUE)
     if (!is.na(soilWFrac) && is.numeric(soilWFrac)) {
-      param[which(param[, 1] == "soilWFracInit"), 2] <- soilWFrac
+      param[which(param[, 1] == "soilWFracInit"), 2] <- sum(soilWFrac)
     }
     ## snowInit cm water equivalent
-    snow = try(ncvar_get(IC.nc,"SWE"),silent = TRUE)
+    snow = try(ncdf4::ncvar_get(IC.nc,"SWE"),silent = TRUE)
     if (!is.na(snow) && is.numeric(snow)) {
       param[which(param[, 1] == "snowInit"), 2] <- snow #MsTMIP SWE kg/m2, need to convert
     }
     ## microbeInit mgC/g soil
-    microbe = try(ncvar_get(IC.nc,"Microbial Biomass C"),silent = TRUE)
+    microbe = try(ncdf4::ncvar_get(IC.nc,"Microbial Biomass C"),silent = TRUE)
     if (!is.na(microbe) && is.numeric(microbe)) {
       param[which(param[, 1] == "microbeInit"), 2] <- microbe * .001 #BETY Microbial Biomass C mg C kg-1 soil
     }
+    
+    #close file
+    ncdf4::nc_close(IC.nc)
   }else{
     #some stuff about IC file that we can give in lieu of actual ICs
   }
