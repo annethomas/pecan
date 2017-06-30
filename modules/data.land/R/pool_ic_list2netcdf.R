@@ -20,6 +20,7 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
   #sets of dims
   dims1 <- list(lon, lat)
   dims2 <- list(lon,lat,nsoil)
+  dims <- list(lon = lon, lat = lat, nsoil = nsoil)
   
   #hardcoded vars (assumes these are the desirable variables)
   ic1 <- ncdf4::var_def(name = "AbvGrndWood", units = "kg C m-2", dim = dims1, -999)
@@ -38,11 +39,17 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
   
   #possibility: dynamic vars (would assume R list has standard names; need a lookup table for dims and units)
   ncvars <- vector(mode = list, length = length(names(input$vals))) #more efficient than appending to list()
+  standard_vars = read.csv("standard_vars.csv") #change
   for(i in seq(input$vals)){
-    #look up names(input$vals)[[i]] in pecan standard output table, get units and dimensions
-    #var <- row from table
-    #dim <- list of dims based on table
-    #ncvars[[i]] <- ncdf4::var_def(name = var$name, units = var$units, dim = dim, -999)
+    #look up variable in pecan standard output table, get units and dimensions
+    varname = names(input$vals)[[i]]
+    var <- standard_vars[which(standard_vars$Variable.Name == varname),]
+    #check var exists
+    
+    dimset = var[,c("dim1","dim2","dim3","dim4")]
+    dim <- dims[which(names(dims) %in% dimset)] #subset list of all dims for this variable
+    #check that dim isn't 0
+    ncvars[[i]] <- ncdf4::var_def(name = var$Varaible.Name, units = var$Units, dim = dim, -999)
   }
   
   #create nc file
