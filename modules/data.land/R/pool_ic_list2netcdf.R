@@ -23,13 +23,12 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
   standard_vars <- data(standard_vars,package = "PEcAn.utils") #standard_vars replacing mstmip_vars; not yet merged
   
   ###function to lapply to all variables in input list and return a list of ncvars
-  list_ncvars <- function(varname,standard_vars,dims){
-    print(varname)
+  to_ncvar <- function(varname,standard_vars,dims){
+    #print(varname)
     var <- standard_vars[which(standard_vars$Variable.Name == varname),]
     #add: check var exists
     dimset <- var[,c("dim1","dim2","dim3","dim4")]
     dim <- dims[which(names(dims) %in% dimset)] #subset list of all dims for this variable
-    print(class(dim[[1]]))
     #add: check that dim isn't 0
     ncvar <- ncdf4::ncvar_def(name = varname, units = var$Units, dim = dim, -999) #also add longname?
     if (var$Long.name != "na") {
@@ -38,7 +37,7 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
     return(ncvar)
   }
   
-  ncvars = lapply(names(IClist$vals),list_ncvars,standard_vars,alldims)
+  ncvars = lapply(names(IClist$vals),to_ncvar,standard_vars,alldims)
   
   #create nc file
   str_ns <- paste0(siteid %/% 1e+09, "-", siteid %% 1e+09)
@@ -53,4 +52,4 @@ pool_ic_list2netcdf <- function(input, outdir,siteid){
   
   #close file
   ncdf4::nc_close(nc)
-}
+} #pool_ic_list2netcdf
